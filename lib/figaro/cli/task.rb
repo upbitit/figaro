@@ -15,10 +15,6 @@ module Figaro
 
       private
 
-      def env
-        ENV.to_hash.update(configuration)
-      end
-
       def configuration
         application.configuration
       end

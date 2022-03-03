@@ -4,7 +4,7 @@ module Figaro
   class CLI < Thor
     class HerokuSet < Task
       def run
-        system(env, command)
+        system(configuration, command)
       end
 
       private

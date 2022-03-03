@@ -33,8 +33,11 @@ module Figaro
     end
 
     def load
-      each do |key, value|
-        skip?(key) ? key_skipped!(key) : set(key, value)
+      each_with_object([]) do |i, obj|
+        key, value = i
+        skip?(key) ? (obj << key) : set(key, value)
+      end.sort.tap do |keys|
+        warn("환경변수 사용 : #{keys * ','}") unless keys.empty?
       end
     end
 

@@ -1,6 +1,8 @@
 .bundle
-.ruby-version
 /Gemfile.lock
+/coverage
 /gemfiles/*.gemfile.lock
 /pkg
 /tmp
+.ruby-version
+.idea

@@ -1,20 +1,15 @@
 describe Figaro::Rails do
   before do
-    run_command_and_stop(<<-CMD)
+    run_simple(<<-CMD)
       rails new example \
         --skip-gemfile \
-        --skip-git \
+        --skip-bundle \
         --skip-keeps \
         --skip-sprockets \
-        --skip-spring \
-        --skip-listen \
         --skip-javascript \
-        --skip-turbolinks \
-        --skip-test \
-        --skip-bootsnap \
+        --skip-test-unit \
         --no-rc \
-        --skip-bundle \
-        --skip-webpack-install
+        --quiet
       CMD
     cd("example")
   end
@@ -25,9 +20,9 @@ describe Figaro::Rails do
     end
 
     it "loads application.yml" do
-      run_command_and_stop("rails runner 'puts Figaro.env.foo'")
+      run_simple("rails runner 'puts Figaro.env.foo'")
 
-      expect(all_stdout).to include("bar")
+      assert_partial_output("bar", all_stdout)
     end
 
     it "happens before database initialization" do
@@ -37,9 +32,9 @@ development:
   database: db/<%= ENV["foo"] %>.sqlite3
 EOF
 
-      run_command_and_stop("rake db:migrate")
+      run_simple("rake db:migrate")
 
-      expect("db/bar.sqlite3").to be_an_existing_file
+      check_file_presence(["db/bar.sqlite3"], true)
     end
 
     it "happens before application configuration" do
@@ -47,9 +42,9 @@ EOF
     config.foo = ENV["foo"]
 EOL
 
-      run_command_and_stop("rails runner 'puts Rails.application.config.foo'")
+      run_simple("rails runner 'puts Rails.application.config.foo'")
 
-      expect(all_stdout).to include("bar")
+      assert_partial_output("bar", all_stdout)
     end
   end
 end

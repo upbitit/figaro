@@ -1,19 +1,19 @@
 describe "figaro install" do
   before do
-    create_directory("example")
+    create_dir("example")
     cd("example")
   end
 
   it "creates a configuration file" do
-    run_command_and_stop("figaro install")
+    run_simple("figaro install")
 
-    expect("config/application.yml").to be_an_existing_file
+    check_file_presence(["config/application.yml"], true)
   end
 
   it "respects path" do
-    run_command_and_stop("figaro install -p env.yml")
+    run_simple("figaro install -p env.yml")
 
-    expect("env.yml").to be_an_existing_file
+    check_file_presence(["env.yml"], true)
   end
 
   context "with a .gitignore file" do
@@ -25,25 +25,25 @@ EOF
     end
 
     it "Git-ignores the configuration file if applicable" do
-      run_command_and_stop("figaro install")
+      run_simple("figaro install")
 
-      expect(".gitignore").to have_file_content(%r(^/foo$))
-      expect(".gitignore").to have_file_content(%r(^/bar$))
-      expect(".gitignore").to have_file_content(%r(^/config/application\.yml$))
+      check_file_content(".gitignore", %r(^/foo$), true)
+      check_file_content(".gitignore", %r(^/bar$), true)
+      check_file_content(".gitignore", %r(^/config/application\.yml$), true)
     end
 
     it "respects path" do
-      run_command_and_stop("figaro install -p env.yml")
+      run_simple("figaro install -p env.yml")
 
-      expect(".gitignore").to have_file_content(%r(^/env\.yml$))
+      check_file_content(".gitignore", %r(^/env\.yml$), true)
     end
   end
 
   context "without a .gitignore file" do
     it "doesn't generate a new .gitignore file" do
-      run_command_and_stop("figaro install")
+      run_simple("figaro install")
 
-      expect(".gitignore").not_to be_an_existing_file
+      check_file_presence([".gitignore"], false)
     end
   end
 end
